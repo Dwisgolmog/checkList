@@ -12,7 +12,7 @@ class _HomePage extends State<HomePage>{
     return Scaffold(
       body: Column(
         children: <Widget>[
-          Text("hello")
+
         ],
       ),
     );

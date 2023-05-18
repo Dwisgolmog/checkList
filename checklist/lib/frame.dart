@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:uiux_project/calender.dart';
-import 'package:uiux_project/homePage.dart';
+import 'package:checklist/calender.dart';
+import 'package:checklist/homePage.dart';
 
 void main() => runApp(FramePage());
 
@@ -33,12 +33,15 @@ class _Frame extends State<Frame>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('CheckList', style: TextStyle(fontSize: 30))
+      ),
       drawer: Drawer(
         child : ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            UserAccountsDrawerHeader(
+            UserAccountsDrawerHeader(//변경해야 함
                 currentAccountPicture: CircleAvatar(
                   backgroundImage: AssetImage('images/profile.png'),
                 ),
