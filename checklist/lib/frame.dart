@@ -68,9 +68,6 @@ class _Frame extends State<Frame>{
       body: Center(
         child: _pages[_selectedIndex],
       ),
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.add),
-      onPressed: (){
-      }),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
