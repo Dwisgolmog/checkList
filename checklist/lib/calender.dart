@@ -1,54 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-void main() {
-  runApp(MyApp());
+class Calendar extends StatefulWidget {
+  @override
+  _CalendarState createState() => _CalendarState();
 }
 
-class MyApp extends StatelessWidget {
+class _CalendarState extends State<Calendar> {
+  TextEditingController _textEditingController = TextEditingController();
+  List<bool> itemCheckedList=[];
+  List<String> lists = [];
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Calender(),
-    );
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
-}
-
-class Calender extends StatefulWidget {
-  @override
-  _CalenderState createState() => _CalenderState();
-}
-
-class _CalenderState extends State<Calender> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calender'),
+        title: Text('Calendar'),
       ),
       body: Column(
-          children: <Widget>[
-            TableCalendar(
-              focusedDay: DateTime.now(),
-              firstDay: DateTime(2023,5,1),
-              lastDay: DateTime(2023,5,31),),
-            Divider(
-              height: 60.0,
-              color: Colors.black,
-              thickness: 0.5,
+        children: <Widget>[
+          TableCalendar(
+            focusedDay: DateTime.now(),
+            firstDay: DateTime(2023, 5, 1),
+            lastDay: DateTime(2023, 5, 31),
+          ),
+          Divider(
+            height: 60.0,
+            color: Colors.black,
+            thickness: 0.5,
+          ),
+          Text('Add a list.'),
+          SizedBox(height: 16.0), // Adds some space below the text
+          Expanded(
+            child: ListView.builder(
+              itemCount: lists.length,
+              itemBuilder: (context, index) {
+                if(itemCheckedList.length<lists.length){
+                  itemCheckedList.add(false);
+                }
+                return ListTile(
+                  title: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage('Images/cute.png'),
+                        radius: 60.0,
+                      ),
+                      SizedBox(
+                        width: 15.0,
+                      ),
+                      Expanded(
+                        child: Text(lists[index]),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          textStyle: MaterialStateProperty.all<TextStyle>(
+                            TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                        onPressed: (){},
+                        child: Text('재촉하기'),
+                      ),
+                      Checkbox(
+                          value: itemCheckedList[index],
+                          onChanged: (value){
+                            setState(() {
+                              itemCheckedList[index] = value!;
+                            });
+                          }
+                      )
+                    ],
+                  ),
+                );
+              },
             ),
-            Text('리스트를 추가하세요.'),
-          ]
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), label: 'Home'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list), label: 'Dialog'
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Dialog'),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -56,40 +95,37 @@ class _CalenderState extends State<Calender> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints){
-                  return AlertDialog(
-                    title: Text('리스트 생성'),
-                    content: Container(
-                      height: constraints.maxHeight * 0.3,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            decoration: InputDecoration(
-                              labelText: '할 일',
-                            ),
-                          ),
-                          BottomNavigationBar(
-
-                            showSelectedLabels: false,
-                            showUnselectedLabels: false,
-                            items: [
-                              BottomNavigationBarItem(
-                                icon: Text('Cancel'),
-                                label: 'Cancel',
-                              ),
-                              BottomNavigationBarItem(
-                                icon: Text('Submit'),
-                                label: 'Submit',
-                              ),
-                            ],
-                          ),
-                        ],
+              return AlertDialog(
+                title: Text('리스트를 추가하세요.'),
+                content: TextField(
+                  controller: _textEditingController,
+                  decoration: InputDecoration(
+                    hintText: '할 일',
+                  ),
+                ),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        child: Text('취소'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
                       ),
-                    ),
-                  );
-                },
+                      ElevatedButton(
+                        child: Text('확인'),
+                        onPressed: () {
+                          setState(() {
+                            lists.add(_textEditingController.text);
+                            _textEditingController.clear();
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               );
             },
           );
