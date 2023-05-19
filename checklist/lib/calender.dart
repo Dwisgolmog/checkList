@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+//DateFormat.yMMMMd(locale).format(date)
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class Calendar extends StatefulWidget {
   @override
@@ -10,6 +13,13 @@ class _CalendarState extends State<Calendar> {
   TextEditingController _textEditingController = TextEditingController();
   List<bool> itemCheckedList=[];
   List<String> lists = [];
+
+  DateTime selectedDay = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+  DateTime focusedDay = DateTime.now();
 
   @override
   void dispose() {
@@ -26,9 +36,34 @@ class _CalendarState extends State<Calendar> {
       body: Column(
         children: <Widget>[
           TableCalendar(
-            focusedDay: DateTime.now(),
-            firstDay: DateTime(2023, 5, 1),
-            lastDay: DateTime(2023, 5, 31),
+              locale: 'ko_KR',
+              focusedDay: DateTime.now(),
+              firstDay: DateTime(2013, 5, 1),
+              lastDay: DateTime(2033, 5, 31),
+              headerStyle: HeaderStyle(
+                titleCentered: true,
+                //title 중앙 정렬 여부
+                titleTextFormatter: (date, locale) =>
+                    DateFormat.yMMMMd(locale).format(date),
+                //title의 날짜 형태
+                formatButtonVisible: false,
+                //formatButton 노출 여부(2weeks)
+                titleTextStyle: const TextStyle(
+                  //title 글자 꾸미기
+                  fontSize: 20.0,
+                  color: Colors.blue,
+                ),
+              ),
+              onDaySelected: (DateTime selectedDay, DateTime focusedDay){
+                //  선택된 날짜의 상태를 갱신
+                setState(() {
+                  this.selectedDay = selectedDay;
+                  this.focusedDay = focusedDay;
+                });
+              },
+              selectedDayPredicate: (DateTime day){
+                return isSameDay(selectedDay, day);
+              }
           ),
           Divider(
             height: 60.0,
