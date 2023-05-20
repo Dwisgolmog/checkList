@@ -11,18 +11,23 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   TextEditingController _textEditingController = TextEditingController();
+  //텍스트 필드의 변화를 핸들링
   List<bool> itemCheckedList=[];
+  //체크박스 목록(상태)를 저장하는 List
   List<String> lists = [];
+  //TextField에 입력된 값 저장하는 List
 
   DateTime selectedDay = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
+    //현재 선택된 날짜
+    DateTime.now().year, //현재 연도
+    DateTime.now().month, //현재 월
+    DateTime.now().day, //현재 일
   );
-  DateTime focusedDay = DateTime.now();
+  DateTime focusedDay = DateTime.now(); //현재 날짜에 포커싱
 
   @override
   void dispose() {
+    //컨트롤러 객체가 제거 될 때 변수에 할당 된 메모리를 해제
     _textEditingController.dispose();
     super.dispose();
   }
@@ -36,10 +41,10 @@ class _CalendarState extends State<Calendar> {
       body: Column(
         children: <Widget>[
           TableCalendar(
-              locale: 'ko_KR',
-              focusedDay: DateTime.now(),
-              firstDay: DateTime(2013, 5, 1),
-              lastDay: DateTime(2033, 5, 31),
+              locale: 'ko_KR', //달력 한국어
+              focusedDay: DateTime.now(), // 현재 날짜 포커싱
+              firstDay: DateTime(2013, 5, 1), //달력 시작 날짜
+              lastDay: DateTime(2033, 5, 31), //달력 종료 날짜
               headerStyle: HeaderStyle(
                 titleCentered: true,
                 //title 중앙 정렬 여부
@@ -47,7 +52,7 @@ class _CalendarState extends State<Calendar> {
                     DateFormat.yMMMMd(locale).format(date),
                 //title의 날짜 형태
                 formatButtonVisible: false,
-                //formatButton 노출 여부(2weeks)
+                //formatButton 노출 여부(2weeks 버튼)
                 titleTextStyle: const TextStyle(
                   //title 글자 꾸미기
                   fontSize: 20.0,
@@ -57,11 +62,13 @@ class _CalendarState extends State<Calendar> {
               onDaySelected: (DateTime selectedDay, DateTime focusedDay){
                 //  선택된 날짜의 상태를 갱신
                 setState(() {
+                  //오브젝트 상태를 변경하기 위한 메소드
                   this.selectedDay = selectedDay;
                   this.focusedDay = focusedDay;
                 });
               },
               selectedDayPredicate: (DateTime day){
+                //selectedDay와 동일한 날자의 모양 바꿈
                 return isSameDay(selectedDay, day);
               }
           ),
@@ -71,15 +78,19 @@ class _CalendarState extends State<Calendar> {
             thickness: 0.5,
           ),
           Text('Add a list.'),
-          SizedBox(height: 16.0), // Adds some space below the text
+          SizedBox(height: 16.0),
           Expanded(
+            //여러 개의 '할 일' 목록을 스크롤 가능한 리스트로 표시
             child: ListView.builder(
-              itemCount: lists.length,
+              //리스트의 항목을 동적으로 생성하여 표시
+              itemCount: lists.length, //TextField에 입력된 아이템 수
               itemBuilder: (context, index) {
-                if(itemCheckedList.length<lists.length){
+                if(itemCheckedList.length<lists.length){ //체크박스의 수가 입력된 아이템 수보다 작으면
                   itemCheckedList.add(false);
+                  //  아이템 수에 맞게 체크박스 초기 상태 추가
                 }
                 return ListTile(
+                  //할 일 할목을 나타내는 위젯
                   title: Row(
                     children: [
                       CircleAvatar(
@@ -97,6 +108,7 @@ class _CalendarState extends State<Calendar> {
                           textStyle: MaterialStateProperty.all<TextStyle>(
                             TextStyle(
                               decoration: TextDecoration.underline,
+                              //  버튼에 밑줄 style 추가
                             ),
                           ),
                         ),
@@ -141,6 +153,7 @@ class _CalendarState extends State<Calendar> {
                 actions: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //버튼 사이의 여유 공간을 균등하게 배분
                     children: [
                       ElevatedButton(
                         child: Text('취소'),
