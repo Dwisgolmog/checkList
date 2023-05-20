@@ -185,7 +185,7 @@ class _LoginSignupState extends State<LoginSignup> {
                           ),
                           SizedBox(height: 30),
 
-                          SizedBox(height: MediaQuery.of(context).size.height - 760),
+                          SizedBox(height: MediaQuery.of(context).size.height - 760),//차냥쓰 컴에선 음수로 측정 돼서 수정 요망
                           ElevatedButton(
                               onPressed: (){},
                               child: const Text('Login',

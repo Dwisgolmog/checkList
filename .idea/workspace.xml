@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="d01b9fff-a79f-433b-b243-0d203f45792b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checklist/lib/calender.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/calender.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checklist/lib/frame.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/frame.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checklist/lib/homePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/homePage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checklist/lib/loginscreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/loginscreen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,29 +22,41 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2PtrCPKzLEuM98brJC6dcd9vfgq" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kimdonghyun/Documents/GitHub/checkList&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;flutter.settings&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true",
+    "com.google.services.firebase.aqiPopupShown": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "io.flutter.reload.alreadyRun": "true",
+    "last_opened_file_path": "/Users/kimdonghyun/Documents/GitHub/checkList",
+    "settings.editor.selected.configurable": "flutter.settings",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
-  <component name="RunManager">
+}]]></component>
+  <component name="RunManager" selected="Flutter.SecondPage">
+    <configuration name="Main" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/checklist/lib/main.dart" />
+      <method v="2" />
+    </configuration>
     <configuration name="SecondPage" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/checklist/lib/frame.dart" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Flutter.SecondPage" />
+      <item itemvalue="Flutter.Main" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
