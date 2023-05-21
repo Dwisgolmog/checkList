@@ -5,11 +5,6 @@ import 'package:checklist/homePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-/*void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(FramePage());
-}*/
 
 class FramePage extends StatelessWidget {
   @override

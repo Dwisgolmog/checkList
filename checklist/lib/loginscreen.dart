@@ -211,7 +211,7 @@ class _LoginSignupState extends State<LoginSignup> {
                                   //로그인 성공시 다음페이지로 넘어감
                                   if(newUser.user != null){
                                     Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => Calendar()));
+                                        MaterialPageRoute(builder: (context) => FramePage()));
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(content: Text('login 성공')));
                                   }
