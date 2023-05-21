@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:checklist/frame.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:checklist/calender.dart';
 
 class LoginSignup extends StatefulWidget {
   const LoginSignup({Key? key}) : super(key: key);
@@ -9,14 +11,17 @@ class LoginSignup extends StatefulWidget {
 }
 
 class _LoginSignupState extends State<LoginSignup> {
-  //final _authentication = FirebaseAuth.instance;
+  //이메일과 패스워들을 이용한 사용자 등록 또는 로그인기능을 가진 매서드를 사용가능하게 함
+  final _authentication = FirebaseAuth.instance;
 
   bool isSignup = true; //메뉴 선택시(Login or Singup)판단하기 위한 변수
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(); //폼에 부여할 글로벌 키 생성
+  //input값에 들어갈 변수 초기화
   String userID = '';
   String userPassword = '';
   String userName = '';
 
+  //텍스트폼에 있는 validate 체크하고 save의 내용을 보여지게 하는 함수
   void _tryValidation(){
     final isValid = _formKey.currentState!.validate();
     if(isValid){
@@ -123,14 +128,17 @@ class _LoginSignupState extends State<LoginSignup> {
                           //로그인 텍스트폼필드
                           TextFormField(
                             key: ValueKey(1),
-                            // validator: (value){
-                            //   if(value!.isEmpty || !value.contains(RegExp('0-9'))){
-                            //     return "아이디에 숫자를 포합시켜주세요.";
-                            //   } return null;
-                            // },
-                            // onSaved: (value){ //사용자가 입력한 value값을 저장하는 기능을 함
-                            //   userID = value!;
-                            // },
+                            validator: (value){ //조건 검사
+                              if(value!.isEmpty){
+                                return "아이디를 입력해주세요.";
+                              } return null;
+                            },
+                            onSaved: (value){ //validation을 위한 메서드
+                              userID = value!;
+                            },
+                            onChanged: (value){ //텍스트폼에 입력된 값을 직접가져오는 메서드
+                              userID = value;
+                            },
                             decoration: const InputDecoration(//텍스트 필드 커스텀
                               prefixIcon: Icon(Icons.how_to_reg,color: Colors.grey,),
                               enabledBorder: OutlineInputBorder( //누르지 않았을시
@@ -156,14 +164,17 @@ class _LoginSignupState extends State<LoginSignup> {
                           TextFormField(
                             obscureText: true, //비밀번호가 안보이게함
                             key: ValueKey(2),
-                            // validator: (value){
-                            //   if(value!.isEmpty || value.length < 6){
-                            //     return "비밀번호는 6자 이상 입력해야 합니다.";
-                            //   }return null;
-                            // },
-                            // onSaved: (value){
-                            //   userPassword = value!;
-                            // },
+                            validator: (value){ //조건 검사
+                              if(value!.isEmpty){
+                                return "비밀번호를 입력해주세요.";
+                              } return null;
+                            },
+                            onSaved: (value){
+                              userPassword = value!;
+                            },
+                            onChanged: (value){
+                              userPassword = value;
+                            },
                             decoration: const InputDecoration( //텍스트 필드 커스텀
                               prefixIcon: Icon(Icons.lock,color: Colors.grey,),
                               enabledBorder: OutlineInputBorder( //누르지 않았을시
@@ -183,11 +194,32 @@ class _LoginSignupState extends State<LoginSignup> {
                             ),
                             style: TextStyle(fontSize: 30),
                           ),
-                          SizedBox(height: 30),
 
-                          SizedBox(height: MediaQuery.of(context).size.height - 760),
+                          SizedBox(height: MediaQuery.of(context).size.height - 730),
+
+                          //login 버튼
                           ElevatedButton(
-                              onPressed: (){},
+                              onPressed: () async{
+                                _tryValidation();
+
+                                try{
+                                  //로그인 기능
+                                  final newUser = await _authentication.signInWithEmailAndPassword(
+                                      email: userID,
+                                      password: userPassword);
+
+                                  //로그인 성공시 다음페이지로 넘어감
+                                  if(newUser.user != null){
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => Calendar()));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('login 성공')));
+                                  }
+                                }catch(e){ //오류 발생시 스낵바로 알려줌
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('에러발생 아이디와 비밀번호를 다시 체크해주십쇼')));
+                                }
+                              },
                               child: const Text('Login',
                                 style: TextStyle(
                                     fontSize: 20
@@ -210,8 +242,10 @@ class _LoginSignupState extends State<LoginSignup> {
                             TextFormField(
                               key: ValueKey(3),
                               validator: (value){ //조건 검사
-                                if(value!.isEmpty || !value.contains(RegExp('[0-9]'))){
-                                  return "아이디에 숫자를 포합시켜주세요.";
+                                if(value!.isEmpty || !value.contains(RegExp('[0-9]')) ||
+                                  !value.contains('@')
+                                ){
+                                  return "아이디를 숫자포함 또는 이메일 형식으로 입력해주세요.";
                                 } return null;
                               },
                               onSaved: (value){
@@ -312,9 +346,29 @@ class _LoginSignupState extends State<LoginSignup> {
                             ),
 
                             SizedBox(height: 60),
+
+                            //Signup 버튼
                             ElevatedButton(
-                              onPressed: (){
+                              onPressed: () async{
                                 _tryValidation();
+                                //아이디중복과 같은 에러처리를 위한 예외처리
+                                try{
+                                  //신규 계정 생성 (새로운 계정등록후에 다음과정이 진행 되야 함으로 await 사용)
+                                  final newUser = await _authentication.createUserWithEmailAndPassword(
+                                      email: userID, password: userPassword);
+
+                                if(newUser.user != null){
+                                    setState(() {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('회원가입 완료!!')));
+                                      isSignup = false;
+                                    });
+                                  }
+                                }catch(e){ //오류 발생시 스낵바로 알려줌
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('에러발생 아이디와 비밀번호를 다시 체크해주십쇼')));
+                                }
+
                               },
                               child: const Text('Signup',
                               style: TextStyle(
