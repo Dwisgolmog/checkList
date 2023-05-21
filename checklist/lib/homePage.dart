@@ -16,7 +16,7 @@ class Group {
 }
 
 class _HomePage extends State<HomePage> {
-  List<String> groups = []; //그룹 리스트
+  List<Group> groups = []; //그룹 리스트
   TextEditingController groupNameController = TextEditingController();
   late String currentUserID; //현재 로그인한 사용자
 
@@ -26,7 +26,7 @@ class _HomePage extends State<HomePage> {
     getUser();
   }
 
-  void getUser() {
+  void getUser() { //사용자 받아오기
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState(() {
         currentUserID = user as String;
@@ -34,7 +34,7 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-  Future<void> addGroup() async {
+  Future<void> addGroup() async { //그룹 추가
     String groupName = groupNameController.text;
     if (groupName.isNotEmpty) {
       try {
@@ -46,7 +46,7 @@ class _HomePage extends State<HomePage> {
         });
         String groupId = docRef.id;
         setState(() {
-          groups.add(Group(id: groupId, name: groupName, createdBy: currentUserID) as String);
+          groups.add(Group(id: groupId, name: groupName, createdBy: currentUserID) as Group);
         });
         groupNameController.clear(); // 텍스트 필드 초기화
       } catch (e) {
@@ -56,17 +56,17 @@ class _HomePage extends State<HomePage> {
   }
 
   //inviteGroup 마저 수정 예정
-    void inviteGroup(int index) {
+    void inviteGroup(int index) { //그룹원을 초대하기 위해 다이얼로그를 표시하는 역할
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          String invitedMember = ''; // 초대할 그룹원을 저장하는 변수
+          String memberId = ''; // 초대할 그룹원을 저장하는 변수
 
           return AlertDialog(
             title: Text('그룹원 초대'),
             content: TextField(
               onChanged: (value) {
-                invitedMember = value; // 입력된 그룹원을 변수에 저장
+                memberId = value; // 입력된 그룹원을 변수에 저장
               },
               decoration: InputDecoration(
                 hintText: '그룹원 아이디',
@@ -76,7 +76,8 @@ class _HomePage extends State<HomePage> {
               ElevatedButton(
                 onPressed: () {
                   // 초대 동작 처리
-                  inviteMember();
+                  String groupId = groups[index].id;
+                  inviteMember(groupId, memberId);
 
                   Navigator.pop(context); // 다이얼로그 닫기
                 },
@@ -94,7 +95,7 @@ class _HomePage extends State<HomePage> {
       );
     }
 
-  void inviteMember(String groupId, String memberId) {
+  void inviteMember(String groupId, String memberId) { //그룹원 초대하는 동작 수행
     try {
       CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
@@ -108,7 +109,7 @@ class _HomePage extends State<HomePage> {
     }
   }
 
-  Future<void> deleteGroup(String groupId) async {
+  Future<void> deleteGroup(String groupId) async { //그룹 삭제
     try {
       CollectionReference groupsRef =
           FirebaseFirestore.instance.collection('groups');
@@ -124,7 +125,7 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
+      body: ListView.builder( //그룹 추가 ui
         itemCount: groups.length + 1,
         itemBuilder: (context, index) {
           if (index == groups.length) {
@@ -146,7 +147,7 @@ class _HomePage extends State<HomePage> {
                   children: [
                     Expanded(
                       child:
-                          Text(groups[index], style: TextStyle(fontSize: 20)),
+                          Text(groups[index] as String, style: TextStyle(fontSize: 20)),
                     ),
                     IconButton(
                       onPressed: () {
@@ -156,7 +157,7 @@ class _HomePage extends State<HomePage> {
                     ),
                     IconButton(
                       onPressed: () {
-                        deleteGroup(groups[index]);
+                        deleteGroup(groups[index] as String);
                       },
                       icon: Icon(Icons.delete),
                     ),
@@ -167,7 +168,7 @@ class _HomePage extends State<HomePage> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton( //그룹 추가 버튼
         child: Icon(Icons.add),
         onPressed: () {
           showDialog(

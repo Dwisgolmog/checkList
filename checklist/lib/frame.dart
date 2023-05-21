@@ -5,11 +5,11 @@ import 'package:checklist/homePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-void main() async{
+/*void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(FramePage());
-}
+}*/
 
 class FramePage extends StatelessWidget {
   @override
@@ -34,15 +34,15 @@ class Frame extends StatefulWidget {
 class _Frame extends State<Frame> {
   int _selectedIndex = 0;
 
-  List _pages = [HomePage(), Calendar()];
+  List _pages = [HomePage(), Calendar()]; //바텀 네비게이터 바 눌렀을 때 화면 전환
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar( //앱바 설정
           centerTitle: true,
           title: Text('CheckList', style: TextStyle(fontSize: 30))),
-      drawer: Drawer(
+      drawer: Drawer( //사이드 메뉴(현재 사용자의 아이디랑 닉네임만 받아와서 헤더에 나타내는 느낌)
           child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
@@ -51,7 +51,7 @@ class _Frame extends State<Frame> {
             currentAccountPicture: CircleAvatar(
               /*backgroundImage: AssetImage('images/profile.png'),*/
             ),
-            accountName: FutureBuilder<User?>(
+            accountName: FutureBuilder<User?>( //현재 사용자의 아이디, 닉네임 받아오기
               future: FirebaseAuth.instance.authStateChanges().first,
               builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -112,7 +112,7 @@ class _Frame extends State<Frame> {
       body: Center(
         child: _pages[_selectedIndex],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar( //바텀 네비게이터 바
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
         items: [
@@ -123,7 +123,7 @@ class _Frame extends State<Frame> {
     );
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) { //바텀 네이게이터 바 아이템 눌렸을 때
     // state 갱신
     setState(() {
       _selectedIndex = index;
