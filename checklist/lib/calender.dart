@@ -182,4 +182,12 @@ class _CalendarState extends State<Calendar> {
       ),
     );
   }
+
+  //initializeDateFormatting() 함수를 호출하여 날짜 및 시간 형식을 초기화하는 것
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    initializeDateFormatting(Localizations.localeOf(context).languageCode);
+  }
+
 }

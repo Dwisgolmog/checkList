@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:checklist/frame.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:checklist/calender.dart';
 
 class LoginSignup extends StatefulWidget {
   const LoginSignup({Key? key}) : super(key: key);
@@ -210,7 +211,7 @@ class _LoginSignupState extends State<LoginSignup> {
                                   //로그인 성공시 다음페이지로 넘어감
                                   if(newUser.user != null){
                                     Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => Frame()));
+                                        MaterialPageRoute(builder: (context) => Calendar()));
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(content: Text('login 성공')));
                                   }
