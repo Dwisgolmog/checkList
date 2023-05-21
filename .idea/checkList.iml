@@ -3,15 +3,9 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/windows/flutter/ephemeral/.plugin_symlinks/firebase_core/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/windows/flutter/ephemeral/.plugin_symlinks/firebase_core/build" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/windows/flutter/ephemeral/.plugin_symlinks/firebase_core/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/windows/flutter/ephemeral/.plugin_symlinks/firebase_core/example/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/windows/flutter/ephemeral/.plugin_symlinks/firebase_core/example/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/windows/flutter/ephemeral/.plugin_symlinks/firebase_core/example/build" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/UiUxProject/checklist/build" />
+      <excludeFolder url="file://$MODULE_DIR$/checklist/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/checklist/build" />
+      <excludeFolder url="file://$MODULE_DIR$/checklist/.dart_tool" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
