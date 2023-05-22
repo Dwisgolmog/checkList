@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:checklist/frame.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:checklist/calender.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginSignup extends StatefulWidget {
   const LoginSignup({Key? key}) : super(key: key);
@@ -357,6 +357,14 @@ class _LoginSignupState extends State<LoginSignup> {
                                   final newUser = await _authentication.createUserWithEmailAndPassword(
                                       email: userID, password: userPassword);
 
+                                  //user라는 데이터베이스를 생성하여 map 형태로 데이터를 저장
+                                  await FirebaseFirestore.instance.collection('user').doc(newUser.user!.uid)
+                                  .set({
+                                    'userName' : userName,
+                                    'userID' : userID,
+                                    'picked_image' : '',
+                                  });
+
                                 if(newUser.user != null){
                                     setState(() {
                                       ScaffoldMessenger.of(context).showSnackBar(
@@ -365,6 +373,8 @@ class _LoginSignupState extends State<LoginSignup> {
                                     });
                                   }
                                 }catch(e){ //오류 발생시 스낵바로 알려줌
+                                  print('오류');
+                                  print(e);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('에러발생 아이디와 비밀번호를 다시 체크해주십쇼')));
                                 }
