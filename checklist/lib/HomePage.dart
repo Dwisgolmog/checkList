@@ -75,8 +75,6 @@ class _HomePage extends State<HomePage> {
                   // 초대 동작 처리
                   String groupId = groupNames![index];
                   inviteMember(memberId,groupId);
-                  print(groupId);
-                  print(memberId);
                   Navigator.pop(context); // 다이얼로그 닫기
                 },
                 child: Text('초대'),
@@ -110,7 +108,8 @@ class _HomePage extends State<HomePage> {
       //초대할 유저의 list에 그룹을 추가하기
       CollectionReference userListCollection = snapshotUser.docs[0].reference.collection('list');
       await userListCollection.add({'GroupID': documentId});
-
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('초대 완료!!')));
     } catch(e){
       print('Error invite Member: $e');
     }
