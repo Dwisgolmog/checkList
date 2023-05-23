@@ -11,19 +11,24 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  //텍스트 입력 필드와 상호작용하기 위한 클래스
   TextEditingController _textEditingController = TextEditingController();
-  List<bool?> itemCheckedList = [];
-  List<String> lists = [];
+  List<bool?> itemCheckedList = []; //체크박스가 있는 리스트 아이템들의 체크 여부 관리하는 리스트
+
+  //현재 달력에서 선택된 날짜
   DateTime selectedDay = DateTime(
+    //DateTime.now() 생성자로 현재 년,월,일로 초기화
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
   );
-  DateTime focusedDay = DateTime.now();
-  Map<DateTime, List<String>> eventList = {};
+  DateTime focusedDay = DateTime.now(); //현재 달력에서 초점이 맞춰진 날짜
+  Map<DateTime, List<String>> eventList = {}; //날짜와 해당 날짜에 연결된 문자열 리스트를 관리하기 위한 맵
 
   @override
+  //해당 위젯이 제거되기 전에 호출되는 생명주기 메서드
   void dispose() {
+    //텍스트 입력 필드의 컨트롤러 해제
     _textEditingController.dispose();
     super.dispose();
   }
@@ -38,17 +43,15 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Calendar'),
-      ),
       body: Column(
         children: <Widget>[
           //달력 생성 함수
           TableCalendar(
-            locale: 'ko_KR',
-            focusedDay: DateTime.now(),
-            firstDay: DateTime(2013, 5, 1),
-            lastDay: DateTime(2033, 5, 31),
+            locale: 'ko_KR', //달력의 언어와 지역 설정
+            focusedDay: DateTime.now(), //초기에 포커스를 가진 날짜 설정 (현재 날짜 설정)
+            firstDay: DateTime(2013, 5, 1), //달력의 시작 날짜 설정
+            lastDay: DateTime(2033, 5, 31), //달력의 마지막 날짜 설정
+            //헤더 제목의 텍스트 스타일 설정
             headerStyle: HeaderStyle(
               titleCentered: true,
               titleTextFormatter: (date, locale) =>
@@ -59,7 +62,7 @@ class _CalendarState extends State<Calendar> {
                 color: Colors.blue,
               ),
             ),
-            //클릭된 날짜 업데이트
+            //날짜가 선택되었을 때 호출되는 콜백 함수
             onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
               setState(() {
                 this.selectedDay = selectedDay;
@@ -71,6 +74,7 @@ class _CalendarState extends State<Calendar> {
               return isSameDay(selectedDay, day);
             },
           ),
+          //달력과 리스트 구분하는 구분선
           Divider(
             height: 60.0,
             color: Colors.black,
@@ -122,6 +126,7 @@ class _CalendarState extends State<Calendar> {
                             width: 15.0,
                           ),
                           Expanded(
+                            //이벤트 데이터 리스트에서 현재 인덱스에 해당하는 값을 가져옴
                             child: Text(eventData![index].toString()),
                           ),
                           TextButton(
@@ -136,6 +141,7 @@ class _CalendarState extends State<Calendar> {
                             child: Text('재촉하기'),
                           ),
                           Checkbox(
+                            //체크박스를 생성하고 체크 여부를 관리
                             value: itemCheckedList[index],
                             onChanged: (value) {
                               setState(() {
@@ -161,6 +167,7 @@ class _CalendarState extends State<Calendar> {
               return AlertDialog(
                 title: Text('리스트를 추가하세요.'),
                 content: TextField(
+                  //텍스트 입력 값 관리
                   controller: _textEditingController,
                   decoration: InputDecoration(
                     hintText: '할 일',
@@ -168,6 +175,7 @@ class _CalendarState extends State<Calendar> {
                 ),
                 actions: [
                   Row(
+                    //자식 위젯들 사이에 동일한 간격을 유지하면서 공간을 고르게 분배하는 정렬 방식
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
@@ -213,8 +221,10 @@ class _CalendarState extends State<Calendar> {
   }
 
   @override
+  //State 객체가 의존성이 변경되었을 때 호출 되는 메서드
   void didChangeDependencies() {
     super.didChangeDependencies();
+    //날짜 형식을 지역화 하기 위해 필요한 초기화 작업을 수행하는 함수
     initializeDateFormatting(Localizations.localeOf(context).languageCode);
   }
 }
