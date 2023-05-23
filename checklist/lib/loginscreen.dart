@@ -139,7 +139,8 @@ class _LoginSignupState extends State<LoginSignup> {
                             onChanged: (value){ //텍스트폼에 입력된 값을 직접가져오는 메서드
                               userID = value;
                             },
-                            decoration: const InputDecoration(//텍스트 필드 커스텀
+                            //텍스트 필드 커스텀
+                            decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.how_to_reg,color: Colors.grey,),
                               enabledBorder: OutlineInputBorder( //누르지 않았을시
                                 borderSide: BorderSide(color: Colors.grey),
@@ -175,7 +176,8 @@ class _LoginSignupState extends State<LoginSignup> {
                             onChanged: (value){
                               userPassword = value;
                             },
-                            decoration: const InputDecoration( //텍스트 필드 커스텀
+                            //텍스트 필드 커스텀
+                            decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.lock,color: Colors.grey,),
                               enabledBorder: OutlineInputBorder( //누르지 않았을시
                                   borderSide: BorderSide(color: Colors.grey),
@@ -201,7 +203,6 @@ class _LoginSignupState extends State<LoginSignup> {
                           ElevatedButton(
                               onPressed: () async{
                                 _tryValidation();
-
                                 try{
                                   //로그인 기능
                                   final newUser = await _authentication.signInWithEmailAndPassword(

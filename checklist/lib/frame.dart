@@ -116,11 +116,6 @@ class _Frame extends State<Frame> {
               ),
             ],
           ),
-          /*ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Setting'),
-            onTap: () {},
-          )*/ //굳이 넣을게 없어서 없애거나 추가할게 있으면 추가할 예정
         ],
       )),
       body: Center(
