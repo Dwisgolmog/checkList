@@ -163,6 +163,7 @@ class _HomePage extends State<HomePage> {
         builder: (BuildContext context) {
           String memberId = ''; // 초대할 그룹원을 저장하는 변수
 
+
           return AlertDialog(
             title: Text('그룹원 초대'),
             content: TextField(

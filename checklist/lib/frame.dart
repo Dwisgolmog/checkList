@@ -42,6 +42,7 @@ class _Frame extends State<Frame> {
     getUserDisplayName();
   }
 
+  //사용자가 선택한 이미지를 매개변수를 받아옴으로써 처리하는 역할
   void pickedImage(File image){
     userPickedImage = image;
     setState(() {
