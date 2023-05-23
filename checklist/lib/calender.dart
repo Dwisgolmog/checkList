@@ -43,6 +43,7 @@ class _CalendarState extends State<Calendar> {
       ),
       body: Column(
         children: <Widget>[
+          //달력 생성 함수
           TableCalendar(
             locale: 'ko_KR',
             focusedDay: DateTime.now(),
@@ -58,12 +59,14 @@ class _CalendarState extends State<Calendar> {
                 color: Colors.blue,
               ),
             ),
+            //클릭된 날짜 업데이트
             onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
               setState(() {
                 this.selectedDay = selectedDay;
                 this.focusedDay = focusedDay;
               });
             },
+            //클릭된 날짜 스타일 적용
             selectedDayPredicate: (DateTime day) {
               return isSameDay(selectedDay, day);
             },
@@ -77,29 +80,37 @@ class _CalendarState extends State<Calendar> {
           SizedBox(height: 16.0),
           Expanded(
             child: StreamBuilder<DocumentSnapshot>(
+              //// 'events' 컬렉션에서 선택된 날짜에 해당하는 문서의 변경 사항을 실시간으로 수신하는 스트림
               stream: FirebaseFirestore.instance
                   .collection('events')
                   .doc(selectedDay.toString())
                   .snapshots(),
               builder: (context, snapshot) {
+                //연결 상태 확인
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
+                // 스냅샷에 데이터가 없거나 문서가 존재하지 않는 경우
                 if (!snapshot.hasData || !snapshot.data!.exists) {
                   return Center(child: Text('No data'));
                 }
+                // 스냅샷에서 데이터를 추출하여 이벤트 데이터에 할당
                 List<dynamic>? eventData =
                 (snapshot.data!.data() as Map<String, dynamic>)['data'];
                 if (eventData == null) {
                   eventData = [];
                 }
+                // 체크박스 리스트의 길이가 이벤트 데이터의 길이보다 작을 경우
                 if (itemCheckedList.length < eventData.length) {
+                  // 체크박스 리스트를 이벤트 데이터의 길이에 맞게 생성
                   itemCheckedList =
                       List.generate(eventData.length, (_) => false);
                 }
+                // 이벤트 데이터를 기반으로 리스트뷰를 생성하여 반환
                 return ListView.builder(
                   itemCount: eventData.length,
                   itemBuilder: (context, index) {
+                    // 각 이벤트 아이템을 ListTile로 표시
                     return ListTile(
                       title: Row(
                         children: [
@@ -172,9 +183,11 @@ class _CalendarState extends State<Calendar> {
                         child: Text('확인'),
                         onPressed: () {
                           setState(() {
+                            //선택된 날짜에 대한 이벤트 리스트가 없는 경우 새로 생성
                             if (eventList[selectedDay] == null) {
                               eventList[selectedDay] = [];
                             }
+                            //입력된 텍스트를 이벤트 리스트에 추가
                             eventList[selectedDay]!
                                 .add(_textEditingController.text);
                             _textEditingController.clear();
