@@ -162,6 +162,9 @@ class _CalendarState extends State<Calendar> {
                       ElevatedButton(
                         child: Text('취소'),
                         onPressed: () {
+                          setState(() {
+                            _textEditingController.clear(); // 텍스트 입력 필드 초기화
+                          });
                           Navigator.of(context).pop();
                         },
                       ),

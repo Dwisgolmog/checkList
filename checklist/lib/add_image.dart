@@ -16,7 +16,8 @@ class AddImage extends StatefulWidget {
   State<AddImage> createState() => _AddImageState();
 }
 
-class _AddImageState extends State<AddImage> {
+class _AddImageState extends State<AddImage>
+{
 
   File? pickedImage;
 
