@@ -52,61 +52,71 @@ class _HomePage extends State<HomePage> {
     }
   }
 
-  //inviteGroup 마저 수정 예정
   //그룹원을 초대하기 위해 다이얼로그를 표시하는 역할
-  //   void inviteGroup(int index) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         String memberId = ''; // 초대할 그룹원을 저장하는 변수
-  //
-  //         return AlertDialog(
-  //           title: Text('그룹원 초대'),
-  //           content: TextField(
-  //             onChanged: (value) {
-  //               memberId = value; // 입력된 그룹원을 변수에 저장
-  //             },
-  //             decoration: InputDecoration(
-  //               hintText: '그룹원 아이디',
-  //             ),
-  //           ),
-  //           actions: [
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 // 초대 동작 처리
-  //                 // String groupId = groups[index].id;
-  //                 // inviteMember(groupId, memberId);
-  //
-  //                 Navigator.pop(context); // 다이얼로그 닫기
-  //               },
-  //               child: Text('초대'),
-  //             ),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 Navigator.pop(context); // 다이얼로그 닫기
-  //               },
-  //               child: Text('취소'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   }
+    void inviteGroup(int index) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          String memberId = ''; // 초대할 그룹원을 저장하는 변수
 
-  //그룹 추가 버튼
-  // void inviteMember(String groupId, String memberId) { ≈
-  //   try {
-  //     CollectionReference groupsRef =
-  //     FirebaseFirestore.instance.collection('groups');
-  //     // 초대할 그룹원의 정보를 업데이트하는 작업 수행
-  //     groupsRef.doc(groupId).update({
-  //       'invitedMembers': FieldValue.arrayUnion([memberId]),
-  //     });
-  //     print('그룹원을 성공적으로 초대했습니다.');
-  //   } catch (e) {
-  //     print('그룹원 초대 동작에 실패했습니다: $e');
-  //   }
-  // }
+          return AlertDialog(
+            title: Text('그룹원 초대'),
+            content: TextField(
+              onChanged: (value) {
+                memberId = value; // 입력된 그룹원을 변수에 저장
+              },
+              decoration: InputDecoration(
+                hintText: '그룹원 이메일',
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  // 초대 동작 처리
+                  String groupId = groupNames![index];
+                  inviteMember(memberId,groupId);
+                  print(groupId);
+                  print(memberId);
+                  Navigator.pop(context); // 다이얼로그 닫기
+                },
+                child: Text('초대'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // 다이얼로그 닫기
+                },
+                child: Text('취소'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+  //그룹추가 버튼을 눌렀을시 초대할 유저 이메일을 찾아 해당 유저의 list에 그룹 추가하는 메소드
+  Future<void> inviteMember(String memberId,String groupId) async {
+    try{
+      //초대할 유저 이메일과 같은 유저를 찾아서 snapshotUser에 저장
+      CollectionReference userCollection = FirebaseFirestore.instance.collection('user');
+      QuerySnapshot snapshotUser = await userCollection.where('userID', isEqualTo: memberId).get();
+
+      //해당 그룹의 그룹 문서값 가져오기
+      CollectionReference groupCollection =
+      FirebaseFirestore.instance.collection('Group');
+      QuerySnapshot querySnapshot =
+      await groupCollection.where('GroupName', isEqualTo: groupId).get();
+      String documentId = querySnapshot.docs[0].id;
+
+      //초대할 유저의 list에 그룹을 추가하기
+      CollectionReference userListCollection = snapshotUser.docs[0].reference.collection('list');
+      await userListCollection.add({'GroupID': documentId});
+
+    } catch(e){
+      print('Error invite Member: $e');
+    }
+
+  }
+
 
   //클릭한 카드(그룹)을 삭제하는 메소드
   Future<void> deleteGroup(String groupId) async {
@@ -204,12 +214,11 @@ class _HomePage extends State<HomePage> {
                 child: Row(
                   children: [
                     Expanded(
-                      child:
-                          Text(groupNames![index], style: TextStyle(fontSize: 20)),
+                      child: Text(groupNames![index], style: TextStyle(fontSize: 20)),
                     ),
                     IconButton(
                       onPressed: () {
-                        //inviteGroup(index);
+                        inviteGroup(index);
                       },
                       icon: Icon(Icons.edit),
                     ),
