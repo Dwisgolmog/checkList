@@ -15,6 +15,7 @@ class _CalendarState extends State<Calendar> {
   TextEditingController _textEditingController = TextEditingController();
   DateTime selectedDay = DateTime.now(); // 달력에서 현재 선택된 날짜
   DateTime focusedDay = DateTime.now(); // 달력이 현재 초점을 맞추고 있는 날짜
+  DateTime currentMonth = DateTime.now(); //현재 월
   Map<DateTime, List<String>> eventList = {}; //해당 날짜에 있는 이벤트를 나타내는 문자열의 리스트
   Map<DateTime, List<bool?>> itemCheckedList = {}; //해당 날짜의 각 이벤트 항목에 대한 체크 상태를 나타내는 리스트
 
@@ -50,7 +51,8 @@ class _CalendarState extends State<Calendar> {
         .doc(day.toString())
         .get()
         .then((snapshot) {
-      if (snapshot.exists) {
+      if (snapshot.exists) { //스냅샷이 존재하면
+        // Firestore에서 해당 날짜의 이벤트 데이터와 체크 여부 데이터를 가져옴
         List<dynamic>? eventData = snapshot.data()?['data'];
         List<dynamic>? checkedData = snapshot.data()?['checked'];
 
@@ -61,7 +63,7 @@ class _CalendarState extends State<Calendar> {
           itemCheckedList[day] =
               List.generate(eventList[day]?.length ?? 0, (_) => false);
 
-          // Firestore의 "checked" 필드를 기반으로 체크 여부 업데이트
+          // Firestore의 checked 필드를 기반으로 체크 여부 업데이트
           for (int i = 0; i < (checkedData?.length ?? 0); i++) {
             itemCheckedList[day]![i] = checkedData?[i] as bool? ?? false;
           }
@@ -103,6 +105,15 @@ class _CalendarState extends State<Calendar> {
         .set({'checked': itemCheckedList[day]}, SetOptions(merge: true));
   }
 
+  // 날짜 클릭 시 실행되는 콜백 함수
+  void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      this.selectedDay = selectedDay;
+      this.focusedDay = focusedDay;
+    });
+    fetchEventData(selectedDay); // 선택된 날짜의 이벤트 데이터를 가져옴
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +123,13 @@ class _CalendarState extends State<Calendar> {
           Expanded(
             child: TableCalendar(
               locale: 'ko_KR', // 한국어 로케일을 사용
-              focusedDay: DateTime.now(), // 현재 날짜로 초기화
+              focusedDay: focusedDay,
               firstDay: DateTime(2013, 5, 1), // 달력의 첫 번째 날짜를 설정
               lastDay: DateTime(2033, 5, 31), // 달력의 마지막 날짜를 설정
               headerStyle: HeaderStyle(
                 titleCentered: true, // 헤더 제목을 가운데 정렬
-                titleTextFormatter: (date, locale) => DateFormat.yMMMMd(locale).format(date), // 헤더 제목의 날짜 형식을 설정합니다.
+                titleTextFormatter: (date, locale) =>
+                    DateFormat.yMMMMd(locale).format(date), // 헤더 제목의 날짜 형식을 설정합니다.
                 formatButtonVisible: false, // 형식 변경 버튼을 숨김.
                 titleTextStyle: const TextStyle(
                   fontSize: 20.0,
@@ -125,13 +137,7 @@ class _CalendarState extends State<Calendar> {
                 ), // 헤더 제목의 텍스트 스타일을 설정
               ),
               //날짜가 선택되었을 때 호출되는 콜백 함수
-              onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-                setState(() {
-                  this.selectedDay = selectedDay;
-                  this.focusedDay = focusedDay;
-                });
-                fetchEventData(selectedDay); // 선택된 날짜의 이벤트 데이터를 가져옴
-              },
+              onDaySelected: onDaySelected,
               //클릭된 날짜 스타일 적용
               selectedDayPredicate: (DateTime day) {
                 return isSameDay(selectedDay, day); // 선택된 날짜와 현재 날짜가 동일한지 확인
@@ -163,13 +169,15 @@ class _CalendarState extends State<Calendar> {
                   return Center(child: Text('No data'));
                 }
                 // 스냅샷에서 데이터를 추출하여 이벤트 데이터에 할당
-                List<dynamic>? eventData = (snapshot.data?.data() as Map<String, dynamic>?)?['data'];
+                List<dynamic>? eventData =
+                (snapshot.data?.data() as Map<String, dynamic>?)?['data'];
                 if (eventData == null) eventData = [];
                 // 체크박스 리스트의 길이가 이벤트 데이터의 길이보다 작을 경우
                 if (itemCheckedList.length < eventData.length) {
                   itemCheckedList = Map<DateTime, List<bool?>>.from(itemCheckedList);
-                  itemCheckedList[selectedDay] = List.generate(eventData.length, (_) => false);
-                }//체크박스 리스트에 해당하는 날짜에 새로운 항목을 추가하고, 해당 항목을 false로 초기화
+                  itemCheckedList[selectedDay] =
+                      List.generate(eventData.length, (_) => false);
+                } //체크박스 리스트에 해당하는 날짜에 새로운 항목을 추가하고, 해당 항목을 false로 초기화
                 return ListView.builder(
                   itemCount: eventData.length,
                   itemBuilder: (context, index) {
@@ -259,7 +267,6 @@ class _CalendarState extends State<Calendar> {
                           Navigator.of(context).pop();
                         },
                       ),
-
                     ],
                   ),
                 ],
@@ -272,3 +279,4 @@ class _CalendarState extends State<Calendar> {
     );
   }
 }
+
