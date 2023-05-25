@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f1d3fb8-7c9e-4177-9d33-b419c5099e44" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checklist/lib/add_image.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/add_image.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checklist/lib/frame.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/frame.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checklist/lib/homePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/checklist/lib/homePage.dart" afterDir="false" />
-    </list>
+    <list default="true" id="8f1d3fb8-7c9e-4177-9d33-b419c5099e44" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,7 +25,7 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "C:/Users/jcy/Documents/GitHub/checkList/checklist",
+    "last_opened_file_path": "C:/Users/vmfkd/OneDrive/문서/GitHub/checkList/checklist",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
