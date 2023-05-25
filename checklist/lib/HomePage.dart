@@ -1,17 +1,20 @@
+import 'package:checklist/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
   _HomePage createState() => _HomePage();
 }
 
-class _HomePage extends State<HomePage> {
+class _HomePage extends State<HomePage>{
   TextEditingController groupNameController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser; //로그인한 유저의 정보를 가져오는 변수
   int groupCount = 0; // 그룹 개수를 저장할 변수
-  List<String>? groupNames = [];
+  List<String>? groupNames = []; //유저가 가지고 있는 그룹을 저장할 변수
 
   @override
   void initState() {
@@ -163,7 +166,6 @@ class _HomePage extends State<HomePage> {
         builder: (BuildContext context) {
           String memberId = ''; // 초대할 그룹원을 저장하는 변수
 
-
           return AlertDialog(
             title: Text('그룹원 초대'),
             content: TextField(
@@ -200,7 +202,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold (
       body: ListView.builder ( //그룹 추가 ui
-        itemCount: groupCount,
+        itemCount: groupCount +1,
         itemBuilder: (context, index) {
           if (index == groupCount) { //수정 필요
             return Card(
@@ -214,28 +216,35 @@ class _HomePage extends State<HomePage> {
               ),
             );
           } else {
-            return Card(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(groupNames![index], style: TextStyle(fontSize: 20)),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        inviteGroup(index);
-                      },
-                      icon: Icon(Icons.edit),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        deleteGroup(groupNames![index] as String);
-                        print(groupNames![index]);
-                      },
-                      icon: Icon(Icons.delete),
-                    ),
-                  ],
+            return InkWell(
+              onTap: (){
+                String selectedGroupName = groupNames![index];
+                Provider.of<VariableProvider>(context, listen: false)
+                    .setGroupName(selectedGroupName);
+              },
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(groupNames![index], style: TextStyle(fontSize: 20)),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          inviteGroup(index);
+                        },
+                        icon: Icon(Icons.edit),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          deleteGroup(groupNames![index] as String);
+                          print(groupNames![index]);
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
