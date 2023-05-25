@@ -1,189 +1,178 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:table_calendar/table_calendar.dart'; //table-calendar API
+import 'package:intl/intl.dart'; //titleTextFormatter 사용
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class Calendar extends StatefulWidget {
+  //Calendar 클래스 매개변수
+  final String Id;
+  Calendar({required this.Id});
+
   @override
   _CalendarState createState() => _CalendarState();
 }
-
-class _CalendarState extends State<Calendar> {
-  //텍스트 입력 필드와 상호작용하기 위한 클래스
-  TextEditingController _textEditingController = TextEditingController();
-  DateTime selectedDay = DateTime.now(); // 달력에서 현재 선택된 날짜
-  DateTime focusedDay = DateTime.now(); // 달력이 현재 초점을 맞추고 있는 날짜
-  Map<DateTime, List<String>> eventList = {}; //해당 날짜에 있는 이벤트를 나타내는 문자열의 리스트
-  Map<DateTime, List<bool?>> itemCheckedList = {}; //해당 날짜의 각 이벤트 항목에 대한 체크 상태를 나타내는 리스트
-
-  @override
-  void initState() {
-    super.initState();
-    // Firebase 초기화
-    Firebase.initializeApp();
-  }
-
-  @override
-  //해당 위젯이 제거되기 전에 호출되는 생명주기 메서드
-  void dispose() {
-    //텍스트 입력 필드의 컨트롤러 해제
-    _textEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 현재 컨텍스트의 로케일 언어 코드를 사용하여 날짜 형식 초기화
-    initializeDateFormatting(Localizations.localeOf(context).languageCode);
-    // 선택된 날짜에 해당하는 이벤트 데이터 가져오기
-    fetchEventData(selectedDay);
-  }
+class _CalendarState extends State<Calendar>{
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay; // 클릭한 날짜
+  TextEditingController tec = TextEditingController(); // TextField의 있는 값 핸들링
+  bool? isChecked = false;
+  final firestoreInstance = FirebaseFirestore.instance;//firestore 인스턴스를 사용하여 데이터베이스와 상호 작용
 
 
-  void fetchEventData(DateTime day) {
-    // Firestore에서 해당 날짜의 이벤트 데이터 가져오기
-    FirebaseFirestore.instance
-        .collection('events')
-        .doc(day.toString())
-        .get()
-        .then((snapshot) {
-      if (snapshot.exists) {
-        List<dynamic>? eventData = snapshot.data()?['data'];
-        List<dynamic>? checkedData = snapshot.data()?['checked'];
-
-        setState(() {
-          // 이벤트 리스트 업데이트
-          eventList[day] = eventData?.map((e) => e as String)?.toList() ?? [];
-          // 체크 여부 리스트 초기화
-          itemCheckedList[day] =
-              List.generate(eventList[day]?.length ?? 0, (_) => false);
-
-          // Firestore의 "checked" 필드를 기반으로 체크 여부 업데이트
-          for (int i = 0; i < (checkedData?.length ?? 0); i++) {
-            itemCheckedList[day]![i] = checkedData?[i] as bool? ?? false;
-          }
-        });
-      } else {
-        setState(() {
-          // 이벤트 리스트 초기화
-          eventList[day] = [];
-          // 체크 여부 리스트 초기화
-          itemCheckedList[day] = [];
-        });
+  //firebase에 리스트 값 저장
+  Future<void> setData(DateTime day) async {
+    await firestoreInstance
+        .collection("Group")
+        .doc(widget.Id.toString())
+        .set({
+      day.toString(): {
+        'Items': FieldValue.arrayUnion([
+          {'Text': tec.text, 'isChecked': isChecked}
+        ])
       }
-    });
+    }, SetOptions(merge: true));
   }
 
-  void updateEventData(DateTime day, List<String>? eventData) {
-    // Firestore에 이벤트 데이터 업데이트
-    FirebaseFirestore.instance
-        .collection('events')
-        .doc(day.toString())
-        .set({'data': eventData ?? []}, SetOptions(merge: true));
+  //팝업창
+  Future<void>popupwindow() async{
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: true, //바깥 영역 터치시 닫을지 여부
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Text('리스트 생성'),
+            content: TextField(
+              controller: tec, //TextField에 입력된 값 tec에 저장
+              decoration: InputDecoration(hintText: '할 일'),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,//자식 위젯들을 균등한 간격으로 정렬
+                children: [
+                  ElevatedButton(
+                    child: Text('취소'),
+                    onPressed: (){
+                      tec.clear();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text('확인'),
+                    onPressed: (){
+                      setData(_selectedDay!);
+                      tec.clear();
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              )
+            ],
+          );
+        }
+    );
   }
-
-  void updateCheckboxList(DateTime day, List<bool?>? itemCheckedList) {
-    // Firestore에 체크 여부 리스트 업데이트
-    FirebaseFirestore.instance
-        .collection('events')
-        .doc(day.toString())
-        .set({'checked': itemCheckedList ?? []}, SetOptions(merge: true));
-  }
-
-  void updateCheckboxState(DateTime day, int index, bool value) {
-    // 체크 여부 상태 업데이트
-    itemCheckedList[day]![index] = value;
-    // Firestore에 체크 여부 리스트 업데이트
-    FirebaseFirestore.instance
-        .collection('events')
-        .doc(day.toString())
-        .set({'checked': itemCheckedList[day]}, SetOptions(merge: true));
-  }
-
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
+      //table calendar 기본 설정
       body: Column(
-        children: <Widget>[
-          Expanded(
-            child: TableCalendar(
-              locale: 'ko_KR', // 한국어 로케일을 사용
-              focusedDay: DateTime.now(), // 현재 날짜로 초기화
-              firstDay: DateTime(2013, 5, 1), // 달력의 첫 번째 날짜를 설정
-              lastDay: DateTime(2033, 5, 31), // 달력의 마지막 날짜를 설정
-              headerStyle: HeaderStyle(
-                titleCentered: true, // 헤더 제목을 가운데 정렬
-                titleTextFormatter: (date, locale) => DateFormat.yMMMMd(locale).format(date), // 헤더 제목의 날짜 형식을 설정합니다.
-                formatButtonVisible: false, // 형식 변경 버튼을 숨김.
-                titleTextStyle: const TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.blue,
-                ), // 헤더 제목의 텍스트 스타일을 설정
+        children: [
+          TableCalendar(
+            locale: 'ko_KR',// 달력 형식을 한국어로 설정
+            firstDay: DateTime.utc(2013, 1, 1), //달력에서 사용할 수 있는 첫 번째 날짜
+            lastDay: DateTime.utc(2033,1,1), //달력에서 사용할 수 있는 마지막 날짜
+            focusedDay: _focusedDay, // 현재 날짜(현재 표시되어야 하는 월)
+
+            //day와 _selectedDay가 동일한 날짜인지 확인하는 함수
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDay, day); //둘이 같은 날짜면 true 반환
+            },
+            //사용자가 날짜를 선택할 때 실행되는 이벤트 핸들러
+            onDaySelected: (selectedDay, focusedDay) async {
+              setState(() { //상태를 업데이트
+                _selectedDay = selectedDay; //사용자가 선택한 날짜
+              });
+            },
+            onPageChanged: (focusedDay){
+              setState(() {
+                _focusedDay = focusedDay;
+              });
+            },
+
+            //달력 헤더 스타일 변경
+            headerStyle: HeaderStyle(
+              titleCentered: true, //title 중앙 정렬 여부
+              //title의 날짜 형태
+              titleTextFormatter: (date, locale) => DateFormat.yMMMMd(locale).format(date),
+              formatButtonVisible: false, //formatButton 노출 여부
+              titleTextStyle: const TextStyle(
+                fontSize: 20.0,
+                color: Colors.blue,
               ),
-              //날짜가 선택되었을 때 호출되는 콜백 함수
-              onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-                setState(() {
-                  this.selectedDay = selectedDay;
-                  this.focusedDay = focusedDay;
-                });
-                fetchEventData(selectedDay); // 선택된 날짜의 이벤트 데이터를 가져옴
-              },
-              //클릭된 날짜 스타일 적용
-              selectedDayPredicate: (DateTime day) {
-                return isSameDay(selectedDay, day); // 선택된 날짜와 현재 날짜가 동일한지 확인
-              },
+            ),
+
+            //달력 (바디) 스타일 변경
+            calendarStyle: CalendarStyle(
+              outsideDaysVisible: false, //다른 달의 날짜 노출 여부
+              weekendTextStyle: TextStyle(color: Colors.red), //주말 스타일
             ),
           ),
-          //달력과 리스트 구분하는 구분선
+
+          //구분선
           Divider(
             height: 60.0,
             color: Colors.black,
             thickness: 0.5,
           ),
+
           Text('Add a list.'),
-          SizedBox(height: 16.0),
+
           Expanded(
-            child: StreamBuilder<DocumentSnapshot>(
-              //'events' 컬렉션에서 선택된 날짜에 해당하는 문서의 변경 사항을 실시간으로 수신하는 스트림
-              stream: FirebaseFirestore.instance
-                  .collection('events')
-                  .doc(selectedDay.toString())
+            child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+              stream: firestoreInstance
+                  .collection("Group")
+                  .doc(widget.Id.toString())
                   .snapshots(),
-              builder: (context, snapshot) {
-                //연결 상태 확인
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                  snapshot) {
+
+                //연결 상태가 대기 중이면 로딩 표시기를 중앙에 표시
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-                // 스냅샷에 데이터가 없거나 문서가 존재하지 않는 경우
-                if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Center(child: Text('No data'));
+                //오류가 발생하면 요류 메시지 표시
+                if (snapshot.hasError) {
+                  return Text('오류: ${snapshot.error}');
                 }
-                // 스냅샷에서 데이터를 추출하여 이벤트 데이터에 할당
-                List<dynamic>? eventData = (snapshot.data?.data() as Map<String, dynamic>?)?['data'];
-                if (eventData == null) eventData = [];
-                // 체크박스 리스트의 길이가 이벤트 데이터의 길이보다 작을 경우
-                if (itemCheckedList.length < eventData.length) {
-                  itemCheckedList = Map<DateTime, List<bool?>>.from(itemCheckedList);
-                  itemCheckedList[selectedDay] = List.generate(eventData.length, (_) => false);
-                }//체크박스 리스트에 해당하는 날짜에 새로운 항목을 추가하고, 해당 항목을 false로 초기화
+                // 데이터가 없거나 문서가 존재하지 않으면 빈 텍스트를 표시합니다.
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Text('');
+                }
+                var data = snapshot.data!.data(); //stream으로부터 가져온 데이터
+                List<Map<String, dynamic>> items = [];
+
+                //선택된 날짜에 해당하는 데이터가 있는지 확인
+                if (_selectedDay != null && data!.containsKey(_selectedDay.toString())) {
+                  //선택된 나짜에 해당하는 항목 리스트를 가져옴
+                  Map<String, dynamic> retrievedData = data[_selectedDay.toString()];
+                  items = List<Map<String, dynamic>>.from(retrievedData['Items'] ?? []);
+                }
+
                 return ListView.builder(
-                  itemCount: eventData.length,
-                  itemBuilder: (context, index) {
-                    bool isChecked = itemCheckedList[selectedDay]![index] ?? false;
+                  itemCount: items.length, //아이템의 개수는 items 리스트의 길이
+                  itemBuilder: (BuildContext context, int index) {
+                    //현재 인덱스에 해당하는 아이템을 가져옴
+                    String text = items[index]['Text'];
+                    bool? isChecked = items[index]['isChecked'] ?? false;
+
                     return ListTile(
                       title: Row(
                         children: [
                           CircleAvatar(radius: 60.0),
                           SizedBox(width: 15.0),
-                          Expanded(
-                            child: Text(
-                              eventData![index]?.toString() ?? '',
-                            ),
-                          ),
+                          Expanded(child: Text(text)),
                           TextButton(
                             style: ButtonStyle(
                               textStyle: MaterialStateProperty.all<TextStyle>(
@@ -197,8 +186,17 @@ class _CalendarState extends State<Calendar> {
                             value: isChecked,
                             onChanged: (value) {
                               setState(() {
-                                itemCheckedList[selectedDay]![index] = value!;
-                                updateCheckboxState(selectedDay, index, value);
+                                isChecked = value;
+                                items[index]['isChecked'] = isChecked;
+                                firestoreInstance
+                                    .collection("Group")
+                                    .doc(widget.Id.toString())
+                                    .set({
+                                  _selectedDay.toString():{
+                                    'Items': items,
+                                  }
+                                },
+                                    SetOptions(merge: true));
                               });
                             },
                           )
@@ -209,63 +207,12 @@ class _CalendarState extends State<Calendar> {
                 );
               },
             ),
-          ),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('리스트를 추가하세요.'),
-                content: TextField(
-                  controller: _textEditingController,
-                  decoration: InputDecoration(hintText: '할 일'),
-                ),
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        child: Text('취소'),
-                        onPressed: () {
-                          setState(() => _textEditingController.clear());
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      ElevatedButton(
-                        child: Text('확인'),
-                        onPressed: () {
-                          setState(() {
-                            // 선택된 날짜에 해당하는 이벤트 리스트와 체크 여부 리스트를 초기화
-                            eventList[selectedDay] ??= [];
-                            itemCheckedList[selectedDay] ??= [];
-
-                            // 텍스트 입력 필드의 값을 이벤트 리스트에 추가
-                            eventList[selectedDay]!.add(_textEditingController.text);
-
-                            // 새로운 이벤트에 대한 체크 여부를 false로 설정
-                            itemCheckedList[selectedDay]!.add(false);
-
-                            // 텍스트 입력 필드를 초기화
-                            _textEditingController.clear();
-
-                            // Firestore에 이벤트 데이터와 체크 여부 리스트를 업데이트
-                            updateEventData(selectedDay, eventList[selectedDay]);
-                            updateCheckboxList(selectedDay, itemCheckedList[selectedDay]);
-                          });
-                          // 다이얼로그 닫음
-                          Navigator.of(context).pop();
-                        },
-                      ),
-
-                    ],
-                  ),
-                ],
-              );
-            },
-          );
+        onPressed: (){
+          popupwindow(); //팝업창
         },
         child: Icon(Icons.add),
       ),
