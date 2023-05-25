@@ -11,12 +11,13 @@ class Calendar extends StatefulWidget {
   @override
   _CalendarState createState() => _CalendarState();
 }
-class _CalendarState extends State<Calendar>{
+class _CalendarState extends State<Calendar> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay; // 클릭한 날짜
   TextEditingController tec = TextEditingController(); // TextField의 있는 값 핸들링
   bool? isChecked = false;
-  final firestoreInstance = FirebaseFirestore.instance;//firestore 인스턴스를 사용하여 데이터베이스와 상호 작용
+  final firestoreInstance = FirebaseFirestore
+      .instance; //firestore 인스턴스를 사용하여 데이터베이스와 상호 작용
 
 
   //firebase에 리스트 값 저장
@@ -34,11 +35,11 @@ class _CalendarState extends State<Calendar>{
   }
 
   //팝업창
-  Future<void>popupwindow() async{
+  Future<void> popupwindow() async {
     return showDialog<void>(
         context: context,
         barrierDismissible: true, //바깥 영역 터치시 닫을지 여부
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             title: Text('리스트 생성'),
             content: TextField(
@@ -47,18 +48,19 @@ class _CalendarState extends State<Calendar>{
             ),
             actions: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,//자식 위젯들을 균등한 간격으로 정렬
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //자식 위젯들을 균등한 간격으로 정렬
                 children: [
                   ElevatedButton(
                     child: Text('취소'),
-                    onPressed: (){
+                    onPressed: () {
                       tec.clear();
                       Navigator.pop(context);
                     },
                   ),
                   ElevatedButton(
                     child: Text('확인'),
-                    onPressed: (){
+                    onPressed: () {
                       setData(_selectedDay!);
                       tec.clear();
                       Navigator.pop(context);
@@ -73,16 +75,20 @@ class _CalendarState extends State<Calendar>{
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       //table calendar 기본 설정
       body: Column(
         children: [
           TableCalendar(
-            locale: 'ko_KR',// 달력 형식을 한국어로 설정
-            firstDay: DateTime.utc(2013, 1, 1), //달력에서 사용할 수 있는 첫 번째 날짜
-            lastDay: DateTime.utc(2033,1,1), //달력에서 사용할 수 있는 마지막 날짜
-            focusedDay: _focusedDay, // 현재 날짜(현재 표시되어야 하는 월)
+            locale: 'ko_KR',
+            // 달력 형식을 한국어로 설정
+            firstDay: DateTime.utc(2013, 1, 1),
+            //달력에서 사용할 수 있는 첫 번째 날짜
+            lastDay: DateTime.utc(2033, 1, 1),
+            //달력에서 사용할 수 있는 마지막 날짜
+            focusedDay: _focusedDay,
+            // 현재 날짜(현재 표시되어야 하는 월)
 
             //day와 _selectedDay가 동일한 날짜인지 확인하는 함수
             selectedDayPredicate: (day) {
@@ -94,7 +100,7 @@ class _CalendarState extends State<Calendar>{
                 _selectedDay = selectedDay; //사용자가 선택한 날짜
               });
             },
-            onPageChanged: (focusedDay){
+            onPageChanged: (focusedDay) {
               setState(() {
                 _focusedDay = focusedDay;
               });
@@ -104,7 +110,8 @@ class _CalendarState extends State<Calendar>{
             headerStyle: HeaderStyle(
               titleCentered: true, //title 중앙 정렬 여부
               //title의 날짜 형태
-              titleTextFormatter: (date, locale) => DateFormat.yMMMMd(locale).format(date),
+              titleTextFormatter: (date, locale) =>
+                  DateFormat.yMMMMd(locale).format(date),
               formatButtonVisible: false, //formatButton 노출 여부
               titleTextStyle: const TextStyle(
                 fontSize: 20.0,
@@ -137,7 +144,6 @@ class _CalendarState extends State<Calendar>{
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                   snapshot) {
-
                 //연결 상태가 대기 중이면 로딩 표시기를 중앙에 표시
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -154,10 +160,13 @@ class _CalendarState extends State<Calendar>{
                 List<Map<String, dynamic>> items = [];
 
                 //선택된 날짜에 해당하는 데이터가 있는지 확인
-                if (_selectedDay != null && data!.containsKey(_selectedDay.toString())) {
+                if (_selectedDay != null &&
+                    data!.containsKey(_selectedDay.toString())) {
                   //선택된 나짜에 해당하는 항목 리스트를 가져옴
-                  Map<String, dynamic> retrievedData = data[_selectedDay.toString()];
-                  items = List<Map<String, dynamic>>.from(retrievedData['Items'] ?? []);
+                  Map<String, dynamic> retrievedData = data[_selectedDay
+                      .toString()];
+                  items =
+                  List<Map<String, dynamic>>.from(retrievedData['Items'] ?? []);
                 }
 
                 return ListView.builder(
@@ -192,7 +201,7 @@ class _CalendarState extends State<Calendar>{
                                     .collection("Group")
                                     .doc(widget.Id.toString())
                                     .set({
-                                  _selectedDay.toString():{
+                                  _selectedDay.toString(): {
                                     'Items': items,
                                   }
                                 },
@@ -211,9 +220,11 @@ class _CalendarState extends State<Calendar>{
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           popupwindow(); //팝업창
         },
         child: Icon(Icons.add),
       ),
     );
+  }
+}
