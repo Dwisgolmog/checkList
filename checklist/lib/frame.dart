@@ -35,6 +35,7 @@ class _Frame extends State<Frame> {
   String _userName = ''; // 사용자 이름 저장 변수
   File? _userImage; //사용자 이미지 저장 변수
   File? userPickedImage;
+  ImageProvider<Object>? _userImageProvider; // 사용자 이미지 저장 변수
 
   @override
   void initState() {
@@ -61,7 +62,6 @@ class _Frame extends State<Frame> {
         }
     );
   }
-
   //firebase에서 user컬렉션에 있는 userNamer과 picked_image를 가져오는 메소드
   Future<void> getUserDisplayName() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -74,7 +74,14 @@ class _Frame extends State<Frame> {
         print('이미지 주소: $userImage');
         print('사용자 이름: $username');
         setState(() {
-          _userImage = userImage != '' ? File(userImage) : null;
+          _userName = username;
+        });
+        setState(() {
+          if (userImage != '') {
+            _userImageProvider = NetworkImage(userImage) as ImageProvider<Object>?;
+          } else {
+            _userImageProvider = null;
+          }
           _userName = username;
         });
       } else {
@@ -84,6 +91,7 @@ class _Frame extends State<Frame> {
       print('사용자가 인증되지 않았습니다.');
     }
   }
+
 
 
   @override
@@ -99,7 +107,7 @@ class _Frame extends State<Frame> {
         children: <Widget>[
           UserAccountsDrawerHeader(
             currentAccountPicture: CircleAvatar(
-              backgroundImage: _userImage != null ? FileImage(_userImage!) : null,
+              backgroundImage: _userImageProvider,
             ),
             accountName: Text(_userName+'님',style: TextStyle(
               fontSize: 30, color: Colors.grey[300]

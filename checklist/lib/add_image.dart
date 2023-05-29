@@ -38,6 +38,7 @@ class _AddImageState extends State<AddImage>
    widget.addImageFunc(pickedImage!);
   }
 
+  //이미지 아이콘을 눌렀을때 나오는 위젯
   @override
   Widget build(BuildContext context) {
     return Container(
