@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:checklist/provider.dart';
+import 'package:checklist/homePage.dart';
 
 class Calendar extends StatefulWidget {
   @override
@@ -18,6 +19,15 @@ class _CalendarState extends State<Calendar> {
   String groupName = "";
   DocumentSnapshot<Map<String, dynamic>>? documentSnapshot;
   bool _isLoading = true;
+  bool isPressed = false;
+
+  void onPressedFunction() {
+    setState(() {
+      isPressed = true; // 아이콘을 표시하기 위해 상태 변경
+      String selectedGroupName = Provider.of<VariableProvider>(context, listen: false).selectedGroupName;
+      Provider.of<VariableProvider>(context, listen: false).setWarningForGroup(selectedGroupName, true);
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -204,7 +214,11 @@ class _CalendarState extends State<Calendar> {
                                     TextDecoration.underline),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                onPressedFunction();
+                              });
+                            },
                             child: Text('재촉하기'),
                           ),
                           Checkbox(
