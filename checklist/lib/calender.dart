@@ -287,7 +287,13 @@ class _CalendarState extends State<Calendar> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          popupwindow();
+          if (groupName.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('선택된 그룹이 없습니다.')),
+            );
+          } else {
+            popupwindow();
+          }
         },
         child: Icon(Icons.add),
       ),
