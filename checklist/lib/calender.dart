@@ -49,32 +49,40 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
-  //데이터를 저장하는 함수
+  // 데이터를 저장하는 함수
   Future<void> setData(DateTime day) async {
     if (documentSnapshot != null) {
       String documentId = documentSnapshot!.id;
 
-      //Firestroe에 선택한 날짜에 대한 데이터를 저장
-      await firestoreInstance
-          .collection('Group')
-          .doc(documentId)
-          .set({
-        day.toString(): {
-          'Items': FieldValue.arrayUnion([
-            {'Text': tec.text, 'isChecked': false}
-          ])
-        }
-      }, SetOptions(merge: true)).then((_) {
+      // Firestroe에 선택한 날짜에 대한 데이터를 저장
+      await firestoreInstance.collection('Group').doc(documentId).set(
+        {
+          day.toString(): {
+            'Items': FieldValue.arrayUnion([
+              {
+                'Text': tec.text,
+                'isChecked': false,
+                'UserImage': _userImageProvider?.toString(),
+              }
+            ])
+          }
+        },
+        SetOptions(merge: true),
+      ).then((_) {
         setState(() {
           List<Map<String, dynamic>> items = [];
-          //documentSnapshot에 해당 날짜의 데이터가 이미 있는지 확인
+          // documentSnapshot에 해당 날짜의 데이터가 이미 있는지 확인
           if (documentSnapshot!.data()!.containsKey(day.toString())) {
             items = List<Map<String, dynamic>>.from(
               documentSnapshot!.data()![day.toString()]['Items'] ?? [],
             );
           }
-          //새로운 할 일을 items 리스트에 추가
-          items.add({'Text': tec.text, 'isChecked': false});
+          // 새로운 할 일을 items 리스트에 추가
+          items.add({
+            'Text': tec.text,
+            'isChecked': false,
+            'UserImage': _userImageProvider?.toString(),
+          });
         });
       });
     } else {
@@ -82,7 +90,7 @@ class _CalendarState extends State<Calendar> {
     }
   }
 
-  //할 일을 입력받는 다이얼로그 표시
+// 할 일을 입력받는 다이얼로그 표시
   Future<void> popupwindow() async {
     return showDialog<void>(
       context: context,
@@ -96,7 +104,7 @@ class _CalendarState extends State<Calendar> {
           ),
           actions: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,//버튼 간격 띄움
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 버튼 간격 띄움
               children: [
                 ElevatedButton(
                   child: Text('취소'),
