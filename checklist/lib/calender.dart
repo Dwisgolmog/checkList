@@ -20,6 +20,7 @@ class _CalendarState extends State<Calendar> {
   DocumentSnapshot<Map<String, dynamic>>? documentSnapshot; //문서id
   bool _isLoading = true; //로딩 중인지 나타내는 변수
   ImageProvider<Object>? _userImageProvider; //현재 로그인한 사용자의 이미지를 나타내는 변수
+  String? userImage;
   bool isPressed = false; //눌렸는지 나타내는 변수
 
   void onPressedFunction() { //눌렀을 때 상태 변하는 함수
@@ -36,7 +37,7 @@ class _CalendarState extends State<Calendar> {
     //groupName 변수 값을 Firestore의 groupName 필드 값으로 초기화 함
     groupName = Provider.of<VariableProvider>(context).groupName ?? '';
     fetchData();
-    _getUserImage();
+    getUserImage();
   }
 
   //문서id 찾는 함수
@@ -58,6 +59,23 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
+  Future<void> getUserImage() async {
+    User? user = FirebaseAuth.instance.currentUser; //로그인한 유저 가져오기
+
+    //현재 사용자가 로그인 한 경우
+    if (user != null) {
+      DocumentSnapshot userSnapshot =
+      await FirebaseFirestore.instance.collection('user').doc(user.uid).get();
+
+      //사용자 문서가 존재하는 경우
+      if (userSnapshot.exists) {
+        userImage = userSnapshot.get('picked_image') ??
+            ''; //유저으 ㅣpicked_image 값 가져오기
+        print('이미지 주소 $userImage');
+      }
+    }
+  }
+
   //데이터를 저장하는 함수
   Future<void> setData(DateTime day) async {
     if (documentSnapshot != null) {
@@ -70,7 +88,11 @@ class _CalendarState extends State<Calendar> {
           .set({
         day.toString(): {
           'Items': FieldValue.arrayUnion([
-            {'Text': tec.text, 'isChecked': false}
+            {
+              'Text': tec.text,
+              'isChecked': false,
+              'userImage': userImage,
+            }
           ])
         }
       }, SetOptions(merge: true)).then((_) {
@@ -83,7 +105,11 @@ class _CalendarState extends State<Calendar> {
             );
           }
           //새로운 할 일을 items 리스트에 추가
-          items.add({'Text': tec.text, 'isChecked': false});
+          items.add({
+            'Text': tec.text,
+            'isChecked': false,
+            'userImage': userImage,
+          });
           documentSnapshot!.data()![day.toString()] = {'Items': items};
         });
       });
@@ -131,34 +157,6 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  //현재 로그인 한 사용자의 이미지 가져오는 함수
-  Future<void> _getUserImage() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    //현재 사용자가 로그인 한 경우
-    if (user != null) {
-      DocumentSnapshot userSnapshot =
-      await FirebaseFirestore.instance.collection('user').doc(user.uid).get();
-
-      //사용자 문서가 존재하는 경우
-      if (userSnapshot.exists) {
-        String userImage = userSnapshot.get('picked_image') ?? '';
-
-        setState(() {
-          //사용자 이미지가 있는 경우
-          if (userImage != '') {
-            _userImageProvider = NetworkImage(userImage) as ImageProvider<Object>?;
-          } else { //사용자 이미지가 없는 경우
-            _userImageProvider = null;
-          }
-        });
-      } else {
-        print('사용자 문서가 존재하지 않습니다.');
-      }
-    } else {
-      print('사용자가 인증되지 않았습니다.');
-    }
-  }
   @override
   Widget build(BuildContext context) {
     groupName = Provider.of<VariableProvider>(context).groupName ?? '';
