@@ -19,7 +19,6 @@ class _CalendarState extends State<Calendar> {
   String groupName = ""; //클릭한 그룹의 이름
   DocumentSnapshot<Map<String, dynamic>>? documentSnapshot; //문서id
   bool _isLoading = true; //로딩 중인지 나타내는 변수
-  ImageProvider<Object>? _userImageProvider; //현재 로그인한 사용자의 이미지를 나타내는 변수
   String? userImage;
   bool isPressed = false; //눌렸는지 나타내는 변수
 
@@ -242,13 +241,13 @@ class _CalendarState extends State<Calendar> {
                   itemBuilder: (BuildContext context, int index) {
                     String text = items[index]['Text']; // 현재 인덱스에 해당하는 아이템의 텍스트를 가져옴
                     bool? isChecked = items[index]['isChecked'] ?? false; // 현재 인덱스에 해당하는 아이템의 체크 여부를 가져옴
+                    String? itemUserImage = items[index]['userImage']; // 현재 인덱스에 해당하는 아이템의 사용자 이미지를 가져옴
                     return ListTile(
                       title: Row(
                         children: [
                           CircleAvatar(
                             radius: 60.0,
-                            backgroundImage: _userImageProvider ??
-                                AssetImage('assets/placeholder.png'),// 사용자 이미지 또는 기본 이미지를 표시
+                            backgroundImage: itemUserImage != null ? NetworkImage(itemUserImage) : null, // 사용자 이미지를 설정 (이미지 주소가 있는 경우에만)
                           ),
                           SizedBox(width: 15.0),
                           Expanded(child: Text(text)), // 아이템 텍스트를 표시
