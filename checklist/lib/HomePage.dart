@@ -243,6 +243,43 @@ class _HomePage extends State<HomePage>{
                         },
                         icon: Icon(Icons.delete),
                       ),
+                      IconButton(
+                          onPressed: (){
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('작업 완료'),
+                                  content: Text('할 일을 끝냈습니까?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        // 경고 아이콘을 숨기고 다이얼로그 닫기
+                                        setState(() {
+                                          Provider.of<VariableProvider>(context, listen: false)
+                                              .setWarning(false);
+                                        });
+                                        Navigator.pop(context); // 다이얼로그 닫기
+                                      },
+                                      child: Text('네'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context); // 다이얼로그 닫기
+                                      },
+                                      child: Text('아니오'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          icon: Icon(Provider.of<VariableProvider>(context, listen: false).isPressed &&
+                              groupNames![index] == Provider.of<VariableProvider>(context, listen: false).selectedGroupName
+                              ? Icons.warning
+                              : Icons.favorite,
+                          )
+                      ),
                     ],
                   ),
                 ),
