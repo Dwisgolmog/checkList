@@ -243,12 +243,12 @@ class _HomePage extends State<HomePage>{
                         },
                         icon: Icon(Icons.delete),
                       ),
-                      IconButton(
+                      IconButton( // 그룹 아이콘 버튼 구현
                           onPressed: (){
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return AlertDialog(
+                                return AlertDialog( //아이콘을 눌렀을 때 뜨는 다이얼로그
                                   title: Text('작업 완료'),
                                   content: Text('할 일을 끝냈습니까?'),
                                   actions: [
@@ -274,6 +274,7 @@ class _HomePage extends State<HomePage>{
                               },
                             );
                           },
+                          // 그룹이 선택된 상태이면서 재촉하기 버튼이 눌려진 상태이면 경고 아이콘으로 바뀌고 그게 아닌 상태면 하트 아이콘
                           icon: Icon(Provider.of<VariableProvider>(context, listen: false).isPressed &&
                               groupNames![index] == Provider.of<VariableProvider>(context, listen: false).selectedGroupName
                               ? Icons.warning

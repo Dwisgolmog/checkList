@@ -20,11 +20,11 @@ class _CalendarState extends State<Calendar> {
   DocumentSnapshot<Map<String, dynamic>>? documentSnapshot; //문서id
   bool _isLoading = true; //로딩 중인지 나타내는 변수
   ImageProvider<Object>? _userImageProvider; //현재 로그인한 사용자의 이미지를 나타내는 변수
-  bool isPressed = false;
+  bool isPressed = false; //눌렸는지 나타내는 변수
 
-  void onPressedFunction() {
+  void onPressedFunction() { //눌렀을 때 상태 변하는 함수
     setState(() {
-      isPressed = true; // 아이콘을 표시하기 위해 상태 변경
+      isPressed = true; // 아이콘을 바꾸기 위해 상태 변경
       String selectedGroupName = Provider.of<VariableProvider>(context, listen: false).selectedGroupName;
       Provider.of<VariableProvider>(context, listen: false).setWarningForGroup(selectedGroupName, true);
     });
