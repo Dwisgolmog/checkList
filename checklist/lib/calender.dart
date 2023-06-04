@@ -25,8 +25,8 @@ class _CalendarState extends State<Calendar> {
   void onPressedFunction() { //눌렀을 때 상태 변하는 함수
     setState(() {
       isPressed = true; // 아이콘을 바꾸기 위해 상태 변경
-      String selectedGroupName = Provider.of<VariableProvider>(context, listen: false).selectedGroupName;
-      Provider.of<VariableProvider>(context, listen: false).setWarningForGroup(selectedGroupName, true);
+      String selectedGroupName = Provider.of<VariableProvider>(context, listen: false).selectedGroupName; // 현재 선택된 그룹의 이름을 가져옴.
+      Provider.of<VariableProvider>(context, listen: false).setWarningForGroup(selectedGroupName, true); //현재 선택된 그룹에 대한 경고 상태를 true로 설정
     });
   }
 
@@ -260,6 +260,7 @@ class _CalendarState extends State<Calendar> {
                                     TextDecoration.underline), // 밑줄이 있는 텍스트 스타일을 적용
                               ),
                             ),
+                            //재촉하기 텍스트 눌렀을 때 함수 호출
                             onPressed: () {
                               setState(() {
                                 onPressedFunction();
