@@ -1,4 +1,4 @@
-# TEMA:이미정했다
+# TEAM:이미정했다
 > flutter로 앱 만들기
 ## Introduce Project
 ### 공유 체크리스트
