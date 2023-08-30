@@ -33,6 +33,9 @@
   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
 </div>
 
+## 작성 문서
+- [최종발표자료](https://github.com/Dwisgolmog/checkList/files/12471175/default.pptx)
+
 ## 개선해야할점
 > - 매번 로그인하는데 불편함이 있어 자동로그인 기능이 필요할 것
 > - 재촉하기 기능을 푸쉬 알람으로 변경할 것
