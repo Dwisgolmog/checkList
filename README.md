@@ -32,3 +32,9 @@
 <div>
   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
 </div>
+
+## 개선해야할점
+> - 매번 로그인하는데 불편함이 있어 자동로그인 기능이 필요할 것
+> - 재촉하기 기능을 푸쉬 알람으로 변경할 것
+> - 한눈에 진행률을 볼 수 있게 그래프로 보여지는 페이지를 추가할 것
+> - async문법을 활용해 속도 개선 및 로딩시의 UI 개선할 것
