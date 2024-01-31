@@ -13,6 +13,9 @@
 > - 그룹 선택하여 체크리스트 생성 및 그룹원들과 공유하기
 > - 체크박스로 체크하기, 재촉하기
 
+###개발 기간
+- 2023.05.17 ~ 2023.05.30
+
 ## 팀원
 | 이름   | 개인 깃허브                                     | 담당 역할 및 기능                                                                                                                                          |
 | ------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -28,16 +31,12 @@
   <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
 </div>
 
-### Cowork Tools
+### Team Collaboration Tools
 <div>
   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
 </div>
 
+## 구현
+
 ## 작성 문서
 - [최종발표자료](https://github.com/Dwisgolmog/checkList/files/12471175/default.pptx)
-
-## 개선해야할점
-> - 매번 로그인하는데 불편함이 있어 자동로그인 기능이 필요할 것
-> - 재촉하기 기능을 푸쉬 알람으로 변경할 것
-> - 한눈에 진행률을 볼 수 있게 그래프로 보여지는 페이지를 추가할 것
-> - async문법을 활용해 속도 개선 및 로딩시의 UI 개선할 것
