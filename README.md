@@ -39,4 +39,5 @@
 ## 구현
 
 ## 작성 문서
-- [최종발표자료](https://github.com/Dwisgolmog/checkList/files/12471175/default.pptx)
+- [최종발표자료 pptx](https://github.com/Dwisgolmog/checkList/files/12471175/default.pptx)
+- [최종발표자료 pdf](https://github.com/Dwisgolmog/checkList/files/14108044/1.pdf)
