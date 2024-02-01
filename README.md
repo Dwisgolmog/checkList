@@ -19,7 +19,7 @@
 ## 팀원
 | 이름   | 개인 깃허브                                     | 담당 역할 및 기능                                                                                                                                          |
 | ------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 김동현 | [Dwisgolmog](https://github.com/Dwisgolmog) | <img src="https://img.shields.io/badge/developer-blue?style=flat"> 팀장(기획),개발자                                                                                           |
+| 김동현 | [Dwisgolmog](https://github.com/Dwisgolmog) | <img src="https://img.shields.io/badge/developer-blue?style=flat"> 팀장(기획),개발자                                                                                       |
 | 주찬양 | [godpraise](https://github.com/godpraise)           | <img src="https://img.shields.io/badge/developer-blue?style=flat"> 개발자               |
 | 최승혁 | [hhyukk](https://github.com/hhyukk)         | <img src="https://img.shields.io/badge/developer-blue?style=flat"> 개발자                                                          |
 
@@ -37,6 +37,21 @@
 </div>
 
 ## 구현
+
+### 로그인
+<div>
+  <img src="https://github.com/Dwisgolmog/checkList/assets/95118426/3854a8dc-29da-45f4-9df1-833259531ff4">
+</div>
+
+### 홈 화면
+<div>
+  <img src="https://github.com/Dwisgolmog/checkList/assets/95118426/31135b4a-1074-4721-9544-23dce745d7be">
+</div>
+
+### 캘린더 화면
+<div>
+  <img src="https://github.com/Dwisgolmog/checkList/assets/95118426/c1f26728-ca69-4b9c-ab93-4fc32ca7e270">
+</div>
 
 ## 작성 문서
 - [최종발표자료 pptx](https://github.com/Dwisgolmog/checkList/files/12471175/default.pptx)
